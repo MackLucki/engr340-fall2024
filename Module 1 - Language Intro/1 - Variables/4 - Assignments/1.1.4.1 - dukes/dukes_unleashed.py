@@ -9,7 +9,17 @@ Note: this problem does not require the "compounding interest" formula from the 
 """
 
 ### Your code here ###
+import cmath
 
-in_state_gift = 0
 
-out_state_gift = 0
+costIN = 30792 #amount needed to cover all costs for a year
+
+in_state_gift = costIN/.05 #how much money at 5% gives you instate cost
+
+costOUT = 47882 # amount needed to cover all costs for a year
+
+out_state_gift = costOUT/.05 #how much money at 5% gives you out of state cost
+
+totInvestment = out_state_gift + in_state_gift - 1000000 # total investment
+
+print('The total investment would need to cost $',totInvestment , 'for an instate and out of state student.')
