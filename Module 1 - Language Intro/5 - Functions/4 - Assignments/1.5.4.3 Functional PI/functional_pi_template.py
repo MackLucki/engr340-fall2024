@@ -1,3 +1,4 @@
+import cmath
 import math
 
 
@@ -8,12 +9,22 @@ def my_pi(target_error):
     :param target_error: Desired error for PI estimation
     :return: Approximation of PI to specified error bound
     """
+    aN = 1
+    bN = 1 / cmath.sqrt(2)
+    tN = 1 / 4
+    pN = 1
+    a1 = 0
 
-    ### YOUR CODE HERE ###
+    for i in range(1, 10):
+        a1 = aN
+        aN = (aN + bN) / 2
+        bN = (cmath.sqrt(a1 * bN))
+        tN = tN - (pN * ((aN - a1) ** 2))
+        pN = 2 * pN
 
     # change this so an actual value is returned
-    return 0
-
+    pi_estimate = ((aN + bN) ** 2) / (4 * tN)
+    return pi_estimate
 
 
 
