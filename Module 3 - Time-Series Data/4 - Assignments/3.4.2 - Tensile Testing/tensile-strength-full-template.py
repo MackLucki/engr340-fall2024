@@ -1,7 +1,10 @@
+import numpy
 import numpy as np
 import os
 import math
 import sys
+
+from numpy import argmax, argmin, average
 
 
 def parse_tensile_file(path_to_file):
@@ -61,10 +64,10 @@ def calculate_stress(force, sample_diameter):
     """
 
     # calculate the cross-section area (mm^2)
-    ### your code here ###
+    sample_area = (sample_diameter**2/4*np.pi)
 
     # delete this line and replace it with your own
-    stress = None
+    stress = force/sample_area * 1000
 
     return stress
 
@@ -80,10 +83,10 @@ def calculate_max_strength_strain(strain, stress):
     """
 
     # calculate the maximum stress experienced
-    ultimate_tensile_stress = -1
+    ultimate_tensile_stress = max(stress)
 
     # calculate the maximum strain experienced
-    fracture_strain = -1
+    fracture_strain = max(strain)
 
     return ultimate_tensile_stress, fracture_strain
 
@@ -101,10 +104,15 @@ def calculate_elastic_modulus(strain, stress):
     """
 
     # dummy variables the function should over write
-    linear_index = None
-    slope = None
-    intercept = None
+    percentSecant = max(stress) * .4
+    DifferenceSecant = abs(stress - percentSecant)
+    linear_index = argmin(DifferenceSecant)
+    rise = stress[0:linear_index]
+    run = strain[0:linear_index]
 
+    parameters = np.polyfit(run,rise,1)
+    slope = parameters[0]
+    intercept = parameters[1]
     # Step 3a: find the point that is 40% of peak stress
     # use from 0 to that value to create a linear plot
 
@@ -153,14 +161,15 @@ def calculate_percent_offset(slope, strain, stress):
     offset = 0.002
 
     # calculate the offset line: y=m(x-0.002) + 0
-    offset_line = None
+
+    offset_line = slope*(strain-offset)
 
     # measure distance from all points on graph to this line. Consider using the
     # abs() method to ensure values are positive
-    distance = None
+    distance = abs(strain-offset_line)
 
     # use argmin to find the index where the distance is minimal
-    intercept_index = -1
+    intercept_index = np.argmin(distance)
 
     return offset_line, intercept_index
 

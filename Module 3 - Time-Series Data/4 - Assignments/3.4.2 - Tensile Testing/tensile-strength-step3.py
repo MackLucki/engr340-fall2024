@@ -1,7 +1,10 @@
+import numpy
 import numpy as np
 import os
 import math
 import sys
+
+from numpy import average, argmin, argmax
 
 
 def parse_tensile_file(path_to_file):
@@ -61,9 +64,13 @@ def calculate_stress(force, sample_diameter):
     """
 
     ### YOUR SOLUTION FROM STEP 1 TEMPLATE HERE ###
+    # calculate the cross-section area (mm^2)
+    sample_area = (sample_diameter ** 2 / 4 * np.pi)
 
-    return None
+    # delete this line and replace it with your own
+    stress = force / sample_area * 1000
 
+    return stress
 
 def calculate_max_strength_strain(strain, stress):
     """
@@ -75,9 +82,14 @@ def calculate_max_strength_strain(strain, stress):
     Fracture Strain: the maximum strain experienced before fracture
     """
 
-    ### YOUR SOLUTION FROM STEP 2 TEMPLATE HERE ###
+    # calculate the maximum stress experienced
+    ultimate_tensile_stress = max(stress)
 
-    return -1, -1
+    # calculate the maximum strain experienced
+    fracture_strain = max(strain)
+
+    return ultimate_tensile_stress, fracture_strain
+
 
 def calculate_elastic_modulus(strain, stress):
     """
@@ -92,10 +104,15 @@ def calculate_elastic_modulus(strain, stress):
     """
 
     # dummy variables the function should over write
-    linear_index = None
-    slope = None
-    intercept = None
+    percentSecant = max(stress) * .4
+    DifferenceSecant = abs(stress - percentSecant)
+    linear_index = argmin(DifferenceSecant)
+    rise = stress[0:linear_index]
+    run = strain[0:linear_index]
 
+    parameters = np.polyfit(run,rise,1)
+    slope = parameters[0]
+    intercept = parameters[1]
     # Step 3a: find the point that is 40% of peak stress
     # use from 0 to that value to create a linear plot
 
