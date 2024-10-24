@@ -32,18 +32,18 @@ def one_sample_tests(_files: list, _mean: float, _alpha: float, _less_than: bool
     """
 
     # list of files that are out of spec
-    fileSet = np.asarray(_files)
     reject_null_hypothesis = []
 
-    for files in fileSet:
-      if _less_than:
-        (stat1, p_value1) = ttest_1samp(files, popmean=_mean, alternative='less')
-        if p_value1 < _alpha:
-            reject_null_hypothesis.append(files)
-      if not _less_than:
-        (stat2, p_value2) = ttest_1samp(files, popmean=_mean, alternative='greater')
-        if p_value2 > _alpha:
-            reject_null_hypothesis.append(files)
+    for files in _files:
+        data_set = np.genfromtxt(files, delimiter=',')
+        if _less_than:
+            (stat1, p_value1) = ttest_1samp(data_set, popmean=_mean, alternative='less')
+            if p_value1 < _alpha:
+                reject_null_hypothesis.append(files)
+        else:
+            (stat2, p_value2) = ttest_1samp(data_set, popmean=_mean, alternative='greater')
+            if p_value2 < _alpha:
+                reject_null_hypothesis.append(files)
 
     # return samples that were rejected
     return reject_null_hypothesis
@@ -80,13 +80,13 @@ if __name__ == "__main__":
     write_to_csv('greater2.txt', greater_than_distribution_two)
 
     # place one-sided test files in a list
-    one_sample_test_files = ['lesser1.txt', 'lesser2.txt', 'greater1.txt', 'greater2.txt']
+    one_sided_test_files = ['lesser1.txt', 'lesser2.txt', 'greater1.txt', 'greater2.txt']
 
     # perform all left-sided tests (rejected should be less than target as means not equal)
-    left_sided_tests = one_sample_tests(_files=one_sample_test_files, _mean=target_mu, _confidence=0.5, _less_than=True)
+    left_sided_tests = one_sample_tests(_files=one_sided_test_files, _mean=target_mu, _alpha=0.5, _less_than=True)
     print('Conducting left sided tests. All samples less that mean should be returned. Samples: ', left_sided_tests)
 
     # perform all left-sided tests (rejected should be greater than target as means not equal)
-    right_sided_tests = one_sample_tests(_files=one_sample_test_files, _mean=target_mu, _confidence=0.5, _less_than=False)
+    right_sided_tests = one_sample_tests(_files=one_sided_test_files, _mean=target_mu, _alpha=0.5, _less_than=False)
     print('Conducting right sided tests. All samples greater that mean should be returned. Samples: ', right_sided_tests)
 
